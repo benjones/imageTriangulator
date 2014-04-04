@@ -7,12 +7,13 @@
 #include "cppitertools/range.hpp"
 using iter::range;
 
+#include "triangleMesh.h"
 
 void drawFrame(SDL_Window* window,
-			   SDL_Surface* image);
+			   const TriangleMesh& triangleMesh);
 
 int main(int argc, char** argv){
-
+  
   if(argc < 2){
 	std::cout << "usage: imageTriangulator <input_image>" << std::endl;
 	exit(1);
@@ -40,7 +41,9 @@ int main(int argc, char** argv){
   std::unique_ptr<SDL_Surface,
 				  decltype(deleter)> image{IMG_Load(argv[1]), deleter};
 
-
+  
+  TriangleMesh triangleMesh{image.get()};
+  
   SDL_SetWindowSize(window.get(),
 					image->w,
 					image->h);
@@ -67,26 +70,30 @@ int main(int argc, char** argv){
 	  }
 	}
 	
-	drawFrame(window.get(), image.get());
-
+	drawFrame(window.get(), triangleMesh);
+	
   }
-
+  
   SDL_GL_DeleteContext(context);
   return 0;
 }
 
 void drawFrame(SDL_Window* window,
-			   SDL_Surface* image){
-
+			   const TriangleMesh& triangleMesh){
+  
   glClearColor(0,0,0,0);
   glClear(GL_COLOR_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0, image->w,
-			 0, image->h);
+  gluOrtho2D(0, triangleMesh.image->w,
+			 0, triangleMesh.image->h);
 
+
+  triangleMesh.renderOpenGL();
+
+/*
   glBegin(GL_QUADS);
   for(auto row : range(image->h)){
 	for(auto col : range(image->w)){
@@ -103,7 +110,8 @@ void drawFrame(SDL_Window* window,
 	  //	  }
 	}
   }
-  glEnd();
+  glEnd();*/
+
   glFlush();
   SDL_GL_SwapWindow(window);
 

@@ -6,8 +6,8 @@ INCLUDE_DIRS=-I./png++-0.2.5 -I/Library/Frameworks/SDL2.framework/Headers \
 
 LINK_FLAGS=-lpng -framework SDL2 -framework OpenGL -framework SDL2_image
 
-HEADERS=
-OBJECTS=imageTriangulator.o
+HEADERS=triangleMesh.h
+OBJECTS=imageTriangulator.o triangleMesh.o
 
 all: imageTriangulator
 
