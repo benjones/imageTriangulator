@@ -32,6 +32,7 @@ public:
   void undoEvent();
   void renderOpenGL() const;
   
+  SDL_Color averageColorInTriangle(size_t triangleIndex) const;
 
   std::vector<Triangle> triangles;
   std::vector<Vertex> vertices;
@@ -40,4 +41,7 @@ public:
 
   const SDL_Surface* image;
   
+  bool pointInTriangle(Eigen::Vector2d point, const Triangle& triangle) const;
+  
+  SDL_Color readColorAtPixel(int x, int y) const;
 };

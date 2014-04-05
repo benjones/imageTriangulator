@@ -75,6 +75,7 @@ int main(int argc, char** argv){
   }
   
   SDL_GL_DeleteContext(context);
+  std::cout << "pixel format: " << SDL_PIXELORDER(image->format->format) << std::endl;
   return 0;
 }
 
@@ -87,21 +88,31 @@ void drawFrame(SDL_Window* window,
   glLoadIdentity();
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
+  //set up the viewport upside down because PNG goes from top to bottom
   gluOrtho2D(0, triangleMesh.image->w,
-			 0, triangleMesh.image->h);
+			 triangleMesh.image->h, 0);
 
 
+  
   triangleMesh.renderOpenGL();
 
-/*
+  const SDL_Surface* image = triangleMesh.image;
   glBegin(GL_QUADS);
-  for(auto row : range(image->h)){
+  for(auto row : range(image->h/2,image->h)){
 	for(auto col : range(image->w)){
 	  //	  if((row + col) % 2){
 	  auto* pix = reinterpret_cast<unsigned char*>(image->pixels) + 
 		row*image->pitch + col*image->format->BytesPerPixel;
 	  
-	  glColor4ubv(pix);
+	  SDL_Color color;
+	  SDL_GetRGB(*reinterpret_cast<uint32_t*>(pix),
+				 image->format,
+				 &color.r,
+				 &color.g,
+				 &color.b);
+	  
+
+	  glColor3ub(color.r, color.g, color.b);
 	  
 	  glVertex2f(col, row);
 	  glVertex2f(col + 1, row);
@@ -110,9 +121,9 @@ void drawFrame(SDL_Window* window,
 	  //	  }
 	}
   }
-  glEnd();*/
-
+  glEnd();
+  
   glFlush();
   SDL_GL_SwapWindow(window);
-
+  
 }
