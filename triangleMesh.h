@@ -17,6 +17,34 @@ struct Triangle{
 };
 
 struct MeshEvent{
+  enum class Type{
+	ADD_BEST_VERTEX,
+	  SPLIT_BEST_EDGE,
+	  MOVE_BEST_VERTEX
+  };
+  
+  //info needed to undo these events
+  struct AddVertexInfo{
+	//this should probably just 1 or 2, actaully
+	std::vector<Triangle> trianglesRemoved;
+	size_t vertex_index; //probably unnecessary, since it should be the last vertex
+  };
+  struct SplitEdgeInfo{
+	//whatever
+  };
+  struct MoveVertexInfo{
+	//whatever
+  };
+
+
+  union LogInfo{
+	AddVertexInfo addVertexInfo;
+	SplitEdgeInfo splitEdgeInfo;
+	MoveVertexInfo moveVertexInfo;
+  };
+
+  Type eventType;
+  LogInfo logInfo;
 };
 
 
@@ -27,7 +55,7 @@ public:
   
   void addBestVertex();
   void splitBestEdge();
-  void bestVertexMove();
+  void moveBestVertex();
 
   void undoEvent();
   void renderOpenGL() const;
